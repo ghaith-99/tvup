@@ -34,17 +34,19 @@ class ChannelPlayer {
     }
 
     async loadChannels() {
-        try {
-            const response = await fetch('https://raw.githubusercontent.com/ghaith-99/ghaith-99/refs/heads/main/mytv.json');
-            if (!response.ok) throw new Error('Network response was not ok');
-            
-            const data = await response.json();
-            this.renderChannels(data);
-        } catch (error) {
-            console.error('Error loading channels:', error);
-            this.errorMessage.style.display = 'block';
-        }
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/ghaith-99/ghaith-99/refs/heads/main/mytv.json');
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        console.log("Data loaded:", data); // يعرض البيانات للتأكد من تحميلها
+        this.renderChannels(data);
+    } catch (error) {
+        console.error('Error loading channels:', error);
+        this.errorMessage.style.display = 'block';
     }
+}
+
 
     renderChannels(channels) {
         this.container.innerHTML = '';
