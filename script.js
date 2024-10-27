@@ -7,6 +7,9 @@ class ChannelPlayer {
         this.loadingSpinner = document.getElementById('loading-spinner');
         this.errorMessage = document.getElementById('error-message');
         this.statusMessage = document.getElementById('status-message');
+        this.playButton = document.getElementById('play-button');
+        this.pauseButton = document.getElementById('pause-button');
+        this.seekBar = document.getElementById('seek-bar');
 
         this.initializeEventListeners();
     }
@@ -27,8 +30,17 @@ class ChannelPlayer {
             this.statusMessage.textContent = 'يتم تحميل البث...';
         });
 
-        this.videoPlayer.addEventListener('error', () => {
-            this.handleVideoError();
+        this.videoPlayer.addEventListener('timeupdate', () => {
+            const value = (this.videoPlayer.currentTime / this.videoPlayer.duration) * 100;
+            this.seekBar.value = value || 0;
+        });
+
+        this.playButton.addEventListener('click', () => this.videoPlayer.play());
+        this.pauseButton.addEventListener('click', () => this.videoPlayer.pause());
+
+        this.seekBar.addEventListener('input', () => {
+            const newTime = (this.seekBar.value * this.videoPlayer.duration) / 100;
+            this.videoPlayer.currentTime = newTime;
         });
     }
 
@@ -85,16 +97,9 @@ class ChannelPlayer {
         this.playerContainer.style.display = 'flex';
 
         if (Hls.isSupported()) {
-            const hls = new Hls({
-                debug: false,
-                enableWorker: true,
-                lowLatencyMode: true,
-                backBufferLength: 90
-            });
-            
+            const hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(this.videoPlayer);
-            
             hls.on(Hls.Events.ERROR, (event, data) => {
                 if (data.fatal) {
                     this.handleVideoError();
