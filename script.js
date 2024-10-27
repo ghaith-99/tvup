@@ -8,6 +8,7 @@ class ChannelPlayer {
         this.errorMessage = document.getElementById('error-message');
         this.statusMessage = document.getElementById('status-message');
 
+        this.plyr = new Plyr(this.videoPlayer); // تهيئة مكتبة Plyr
         this.initializeEventListeners();
     }
 
@@ -85,15 +86,10 @@ class ChannelPlayer {
         this.playerContainer.style.display = 'flex';
 
         if (Hls.isSupported()) {
-            const hls = new Hls({
-                debug: false,
-                enableWorker: true,
-                lowLatencyMode: true,
-                backBufferLength: 90
-            });
-            
+            const hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(this.videoPlayer);
+            this.plyr.play(); // تشغيل Plyr بعد تحميل HLS
             
             hls.on(Hls.Events.ERROR, (event, data) => {
                 if (data.fatal) {
@@ -102,6 +98,7 @@ class ChannelPlayer {
             });
         } else if (this.videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
             this.videoPlayer.src = url;
+            this.plyr.play();
         } else {
             this.handleVideoError();
             return;
@@ -111,30 +108,24 @@ class ChannelPlayer {
     }
 
     requestFullscreen() {
-        try {
-            if (this.videoPlayer.requestFullscreen) {
-                this.videoPlayer.requestFullscreen();
-            } else if (this.videoPlayer.webkitRequestFullscreen) {
-                this.videoPlayer.webkitRequestFullscreen();
-            } else if (this.videoPlayer.msRequestFullscreen) {
-                this.videoPlayer.msRequestFullscreen();
-            }
-        } catch (error) {
-            console.error('Fullscreen request failed:', error);
+        if (this.videoPlayer.requestFullscreen) {
+            this.videoPlayer.requestFullscreen();
+        } else if (this.videoPlayer.webkitRequestFullscreen) {
+            this.videoPlayer.webkitRequestFullscreen();
+        } else if (this.videoPlayer.msRequestFullscreen) {
+            this.videoPlayer.msRequestFullscreen();
         }
     }
 
     closePlayer() {
-        this.videoPlayer.pause();
+        this.plyr.pause();
         this.playerContainer.style.display = 'none';
         this.videoPlayer.src = '';
         this.loadingSpinner.style.display = 'none';
         this.statusMessage.textContent = '';
 
         if (document.fullscreenElement) {
-            document.exitFullscreen().catch(err => {
-                console.error('Error exiting fullscreen:', err);
-            });
+            document.exitFullscreen();
         }
     }
 
@@ -145,7 +136,6 @@ class ChannelPlayer {
     }
 }
 
-// تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
     const player = new ChannelPlayer();
     player.loadChannels();
