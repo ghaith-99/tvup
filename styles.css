@@ -92,6 +92,13 @@ body {
     z-index: 1000;
 }
 
+.video-player {
+    width: 80%;
+    max-width: 800px;
+    border-radius: var(--border-radius);
+    background-color: black;
+}
+
 .close-button {
     position: absolute;
     top: 20px;
@@ -128,18 +135,5 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-.error-message {
-    display: none;
-    background-color: #ff4c4c;
-    color: white;
-    padding: 1rem;
-    border-radius: var(--border-radius);
-    margin: 1rem;
-    text-align: center;
-}
-
-.status-message {
-    color: var(--text-color);
-    margin-top: 10px;
-    font-weight: bold;
-}
+@media (max-width: 768px) {
+    
