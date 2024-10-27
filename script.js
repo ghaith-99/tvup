@@ -2,7 +2,7 @@ class ChannelPlayer {
     constructor() {
         this.container = document.getElementById('channel-container');
         this.playerContainer = document.getElementById('video-player-container');
-        this.videoPlayer = videojs('video-player');
+        this.videoPlayer = document.getElementById('video-player');
         this.closeButton = document.getElementById('close-button');
         this.loadingSpinner = document.getElementById('loading-spinner');
         this.errorMessage = document.getElementById('error-message');
@@ -15,6 +15,20 @@ class ChannelPlayer {
         this.closeButton.addEventListener('click', () => this.closePlayer());
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') this.closePlayer();
+        });
+
+        this.videoPlayer.addEventListener('playing', () => {
+            this.loadingSpinner.style.display = 'none';
+            this.statusMessage.textContent = '';
+        });
+
+        this.videoPlayer.addEventListener('waiting', () => {
+            this.loadingSpinner.style.display = 'block';
+            this.statusMessage.textContent = 'يتم تحميل البث...';
+        });
+
+        this.videoPlayer.addEventListener('error', () => {
+            this.handleVideoError();
         });
     }
 
@@ -70,21 +84,58 @@ class ChannelPlayer {
         this.loadingSpinner.style.display = 'block';
         this.playerContainer.style.display = 'flex';
 
-        // Use Video.js to load the video
-        this.videoPlayer.src({ type: 'application/x-mpegURL', src: url });
-        this.videoPlayer.play();
-
-        this.videoPlayer.on('error', () => {
+        if (Hls.isSupported()) {
+            const hls = new Hls({
+                debug: false,
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 90
+            });
+            
+            hls.loadSource(url);
+            hls.attachMedia(this.videoPlayer);
+            
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal) {
+                    this.handleVideoError();
+                }
+            });
+        } else if (this.videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+            this.videoPlayer.src = url;
+        } else {
             this.handleVideoError();
-        });
+            return;
+        }
+
+        this.requestFullscreen();
+    }
+
+    requestFullscreen() {
+        try {
+            if (this.videoPlayer.requestFullscreen) {
+                this.videoPlayer.requestFullscreen();
+            } else if (this.videoPlayer.webkitRequestFullscreen) {
+                this.videoPlayer.webkitRequestFullscreen();
+            } else if (this.videoPlayer.msRequestFullscreen) {
+                this.videoPlayer.msRequestFullscreen();
+            }
+        } catch (error) {
+            console.error('Fullscreen request failed:', error);
+        }
     }
 
     closePlayer() {
         this.videoPlayer.pause();
         this.playerContainer.style.display = 'none';
-        this.videoPlayer.src('');
+        this.videoPlayer.src = '';
         this.loadingSpinner.style.display = 'none';
         this.statusMessage.textContent = '';
+
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(err => {
+                console.error('Error exiting fullscreen:', err);
+            });
+        }
     }
 
     handleVideoError() {
