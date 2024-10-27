@@ -136,4 +136,28 @@ body {
 }
 
 @media (max-width: 768px) {
-    
+    .channel-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        padding: 0.5rem;
+    }
+
+    .video-player {
+        width: 95%;
+    }
+}
+
+.error-message {
+    display: none;
+    background-color: #ff4c4c;
+    color: white;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin: 1rem;
+    text-align: center;
+}
+
+.status-message {
+    color: var(--text-color);
+    margin-top: 10px;
+    font-weight: bold;
+}
