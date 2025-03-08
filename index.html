@@ -51,48 +51,51 @@
         let currentUser = null;
 
         // █████████████████████ دوال النظام █████████████████████
-        async function showPlayers(type) {
-            try {
-                const response = await fetch(SHEETDB_API);
-                const players = await response.json();
-                const container = document.getElementById('players-container');
-                container.innerHTML = '';
-                
-                players.forEach(player => {
-                    const clubsHTML = player.clubs.split(',')
-                        .map(club => `<img src="/api/placeholder/25/25" alt="${club.trim()}" class="club-img">`)
-                        .join('');
-                    
-                    const playerCard = `
-                        <div class="player-card">
-                            <img src="${player.image}" class="player-img" onclick="openModal('${player.image}')">
-                            <div class="player-info">
-                                <div class="player-name">${player.name}</div>
-                                <div class="player-details">
-                                    <div class="detail-item">
-                                        <span>العمر:</span>
-                                        <span>${player.age}</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span>الجنسية:</span>
-                                        <img src="${player.nationalityImg}" class="flag-img">
-                                        <span>${player.nationality}</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span>الأندية:</span>
-                                        <div class="clubs-container">${clubsHTML}</div>
-                                    </div>
-                                </div>
+async function showPlayers(type) {
+    try {
+        const response = await fetch(SHEETDB_API);
+        if (!response.ok) throw new Error('فشل جلب البيانات');
+        const players = await response.json();
+        
+        const container = document.getElementById('players-container');
+        container.innerHTML = '';
+        
+        players.forEach(player => {
+            // تأكد من أن الحقول تطابق جدولك
+            const clubsHTML = player.clubs.split(',')
+                .map(club => `<img src="/api/placeholder/25/25" alt="${club.trim()}" class="club-img">`)
+                .join('');
+
+            const playerCard = `
+                <div class="player-card">
+                    <img src="${player.image}" class="player-img">
+                    <div class="player-info">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-details">
+                            <div class="detail-item">
+                                <span>العمر:</span>
+                                <span>${player.age}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>الجنسية:</span>
+                                <img src="${player.nationalityImg}" class="flag-img">
+                                <span>${player.nationality}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>الأندية:</span>
+                                <div class="clubs-container">${clubsHTML}</div>
                             </div>
                         </div>
-                    `;
-                    container.insertAdjacentHTML('beforeend', playerCard);
-                });
-            } catch (error) {
-                alert('حدث خطأ في تحميل البيانات!');
-            }
-        }
-
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', playerCard);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        alert('حدث خطأ في تحميل البيانات!');
+    }
+}
         async function addPlayer() {
             const newPlayer = {
                 name: document.getElementById('player-name').value,
