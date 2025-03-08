@@ -213,15 +213,16 @@
         }
         .player-img-container {
             position: relative;
-            height: 100px;
+            height: auto;
             overflow: hidden;
         }
         .player-img {
-            width: 30%;
-            height: 30%;
+            width: 150px;
+            height: 150px;
             object-fit: cover;
+            border-radius: 50%;
             cursor: pointer;
-            transition: transform 0.5s;
+            transition: transform 0.3s;
         }
         .player-img:hover {
             transform: scale(1.05);
@@ -256,7 +257,6 @@
             width: 28px;
             height: 28px;
             object-fit: cover;
-            border-radius: 50%;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             border: 1px solid #e5e7eb;
         }
@@ -308,7 +308,6 @@
             background-color: rgba(0, 0, 0, 0.5);
             width: 50px;
             height: 50px;
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
