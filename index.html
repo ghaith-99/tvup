@@ -410,32 +410,6 @@
             font-size: 14px;
             font-weight: 700;
         }
-        .search-bar {
-            display: flex;
-            margin: 20px 0;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .search-input {
-            flex: 1;
-            padding: 12px 20px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px 0 0 8px;
-            font-size: 16px;
-        }
-        .search-button {
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 0 8px 8px 0;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .search-button:hover {
-            background-color: #2563eb;
-        }
         /* تحسينات الواجهة للأجهزة المحمولة */
         @media (max-width: 768px) {
             .form-row {
@@ -495,14 +469,7 @@
         </header>
 
         <div class="container">
-            <!-- شريط البحث -->
-            <div class="search-bar">
-                <input type="text" id="search-input" class="search-input" placeholder="ابحث عن لاعب...">
-                <button class="search-button" onclick="searchPlayers()">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-
+        
             <div class="buttons-container">
                 <button class="btn btn-primary btn-icon" onclick="showPlayers('retired')">
                     <i class="fas fa-history"></i>
